@@ -107,9 +107,28 @@
       this.dy = BALL_START_DY
     }
 
-    moveByStep() {
+    move(p1, p2) {
+      if (this.shouldBounceFromTopWall() || this.shouldBounceFromBottomWall()) {
+        this.bounceFromWall()
+      }
+      if (this.shouldBounceFromLeftPaddle(p1.paddle) || this.shouldBounceFromRightPaddle(p2.paddle)) {
+        this.bounceFromPaddle()
+      }
+
+      if (this.isOutsideOnLeft()) {
+        this.moveToStart()
+        p2.points++
+      } else if (this.isOutsideOnRight()) {
+        this.moveToStart()
+        p1.points++
+      }
+
       this.x += this.dx
       this.y += this.dy
+    }
+
+    draw() {
+      drawCircle(this.x, this.y, BALL_R)
     }
 
     shouldBounceFromTopWall() {
@@ -155,10 +174,6 @@
       return this.dx > 0 &&
         isInBetween(this.x + BALL_R, PADDLE_P2_X, PADDLE_P2_X + PADDLE_WIDTH) &&
         this.isOnTheSameHeightAsPaddle(paddle.y)
-    }
-
-    draw() {
-      drawCircle(this.x, this.y, BALL_R)
     }
   }
 
@@ -213,55 +228,69 @@
     }
   }
 
-  // State
-  let paused = false
-  const ball = new Ball()
-  const p1 = new Player(PADDLE_P1_X, BOARD_P1_X)
-  const p2 = new Player(PADDLE_P2_X, BOARD_P2_X)
-
-  function movePaddles() {
-    p1.makeAction()
-    p2.makeAction()
-  }
-
-  function moveBall() {
-    if (ball.shouldBounceFromTopWall() || ball.shouldBounceFromBottomWall()) {
-      ball.bounceFromWall()
-    }
-    if (ball.shouldBounceFromLeftPaddle(p1.paddle) || ball.shouldBounceFromRightPaddle(p2.paddle)) {
-      ball.bounceFromPaddle()
+  class Game {
+    constructor() {
+      this.paused = false
+      this.ball = new Ball()
+      this.p1 = new Player(PADDLE_P1_X, BOARD_P1_X)
+      this.p2 = new Player(PADDLE_P2_X, BOARD_P2_X)
     }
 
-    if (ball.isOutsideOnLeft()) {
-      ball.moveToStart()
-      p2.points++
-    } else if (ball.isOutsideOnRight()) {
-      ball.moveToStart()
-      p1.points++
+    nextState() {
+      this.ball.move(this.p1, this.p2)
+      this.p1.makeAction()
+      this.p2.makeAction()
     }
 
-    ball.moveByStep()
+    drawState() {
+      clearCanvas()
+      this.ball.draw()
+      this.p1.draw()
+      this.p2.draw()
+    }
+
+    updateAndDrawState() {
+      if (this.paused) {
+        return
+      }
+      this.nextState()
+      this.drawState()
+    }
+
+    setupControl() {
+      window.addEventListener('keydown', function (event) {
+        let code = event.code
+        if (code === P1_UP_BUTTON) {
+          this.p1.action = UP_ACTION
+        } else if (code === P1_DOWN_BUTTON) {
+          this.p1.action = DOWN_ACTION
+        } else if (code === P2_UP_BUTTON) {
+          this.p2.action = UP_ACTION
+        } else if (code === P2_DOWN_BUTTON) {
+          this.p2.action = DOWN_ACTION
+        } else if (code === PAUSE_BUTTON) {
+          this.paused = !paused
+        }
+      }.bind(this))
+
+      window.addEventListener('keyup', function (event) {
+        let code = event.code
+        if ((code === P1_UP_BUTTON && this.p1.action === UP_ACTION) || (code === P1_DOWN_BUTTON && this.p1.action === DOWN_ACTION)) {
+          this.p1.action = STOP_ACTION
+        } else if ((code === P2_UP_BUTTON && this.p2.action === UP_ACTION) || (code === P2_DOWN_BUTTON && this.p2.action === DOWN_ACTION)) {
+          this.p2.action = STOP_ACTION
+        }
+      }.bind(this))
+    }
+
+    start() {
+      setInterval(this.updateAndDrawState.bind(this), STATE_CHANGE_INTERVAL)
+      this.setupControl()
+    }
   }
 
-  function updateState() {
-    moveBall()
-    movePaddles()
-  }
-
-  function drawState() {
-    clearCanvas()
-    ball.draw()
-    p1.draw()
-    p2.draw()
-  }
-
-  function updateAndDrawState() {
-    if (paused) return
-    updateState()
-    drawState()
-  }
-
-  setInterval(updateAndDrawState, STATE_CHANGE_INTERVAL)
+  const game = new Game()
+  game.start()
 </script>
 </body>
 </html>
