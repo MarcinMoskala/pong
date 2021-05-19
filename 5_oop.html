@@ -163,10 +163,10 @@
           const minPaddleY = CANVAS_HEIGHT - PADDLE_HEIGHT;
           this.y = coerceIn(newY, maxPaddleY, minPaddleY);
         },
-        moveDown: function () {
+        stepDown: function () {
           this.setY(this.y + PADDLE_STEP);
         },
-        moveUp: function () {
+        stepUp: function () {
           this.setY(this.y - PADDLE_STEP);
         },
         draw: function () {
@@ -175,9 +175,9 @@
       },
       makeAction: function () {
         if (this.action === UP_ACTION) {
-          this.paddle.moveUp();
+          this.paddle.stepUp();
         } else if (this.action === DOWN_ACTION) {
-          this.paddle.moveDown();
+          this.paddle.stepDown();
         }
       },
       drawPoints: function () {

@@ -164,11 +164,11 @@
       this.y = coerceIn(newY, maxPaddleY, minPaddleY);
     }
 
-    moveDown() {
+    stepDown() {
       this.setY(this.y + PADDLE_STEP);
     }
 
-    moveUp() {
+    stepUp() {
       this.setY(this.y - PADDLE_STEP);
     }
 
@@ -187,9 +187,9 @@
 
     makeAction() {
       if (this.action === UP_ACTION) {
-        this.paddle.moveUp();
+        this.paddle.stepUp();
       } else if (this.action === DOWN_ACTION) {
-        this.paddle.moveDown();
+        this.paddle.stepDown();
       }
     }
 
