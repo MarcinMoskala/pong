@@ -78,20 +78,20 @@
     }
 
     // Input
-    let p1Click = STOP_ACTION;
-    let p2Click = STOP_ACTION;
+    let p1Action = STOP_ACTION;
+    let p2Action = STOP_ACTION;
     let paused = false;
 
     window.addEventListener('keydown', function (event) {
         let code = event.code;
         if (code === P1_UP_BUTTON) {
-            p1Click = UP_ACTION;
+            p1Action = UP_ACTION;
         } else if (code === P1_DOWN_BUTTON) {
-            p1Click = DOWN_ACTION;
+            p1Action = DOWN_ACTION;
         } else if (code === P2_UP_BUTTON) {
-            p2Click = UP_ACTION;
+            p2Action = UP_ACTION;
         } else if (code === P2_DOWN_BUTTON) {
-            p2Click = DOWN_ACTION;
+            p2Action = DOWN_ACTION;
         } else if (code === PAUSE_BUTTON) {
             paused = !paused;
         }
@@ -99,10 +99,10 @@
 
     window.addEventListener('keyup', function (event) {
         let code = event.code;
-        if ((code === P1_UP_BUTTON && p1Click === UP_ACTION) || (code === P1_DOWN_BUTTON && p1Click === DOWN_ACTION)) {
-            p1Click = STOP_ACTION;
-        } else if ((code === P2_UP_BUTTON && p2Click === UP_ACTION) || (code === P2_DOWN_BUTTON && p2Click === DOWN_ACTION)) {
-            p2Click = STOP_ACTION;
+        if ((code === P1_UP_BUTTON && p1Action === UP_ACTION) || (code === P1_DOWN_BUTTON && p1Action === DOWN_ACTION)) {
+            p1Action = STOP_ACTION;
+        } else if ((code === P2_UP_BUTTON && p2Action === UP_ACTION) || (code === P2_DOWN_BUTTON && p2Action === DOWN_ACTION)) {
+            p2Action = STOP_ACTION;
         }
     })
 
@@ -123,14 +123,14 @@
     }
 
     function movePaddles() {
-        if (p1Click === UP_ACTION) {
+        if (p1Action === UP_ACTION) {
             p1PaddleY = coercePaddle(p1PaddleY - PADDLE_STEP);
-        } else if (p1Click === DOWN_ACTION) {
+        } else if (p1Action === DOWN_ACTION) {
             p1PaddleY = coercePaddle(p1PaddleY + PADDLE_STEP);
         }
-        if (p2Click === UP_ACTION && p2PaddleY >= 0) {
+        if (p2Action === UP_ACTION && p2PaddleY >= 0) {
             p2PaddleY = coercePaddle(p2PaddleY - PADDLE_STEP);
-        } else if (p2Click === DOWN_ACTION) {
+        } else if (p2Action === DOWN_ACTION) {
             p2PaddleY = coercePaddle(p2PaddleY + PADDLE_STEP);
         }
     }
